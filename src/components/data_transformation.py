@@ -22,7 +22,7 @@ class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
-    def get_data_transformer_object(self, train_df):
+    def get_data_transformer_object(self, train_df, target_column_name):
         '''
         Creates a ColumnTransformer for preprocessing the data.
 
@@ -32,11 +32,18 @@ class DataTransformation:
         '''
         try:
             numerical_columns = ['frequency', 'recency', 'Time', 'monetary_value']
-            target_encoded_columns = ['Description']
+            target_guided_column = 'Description'
             onehot_encoded_columns = ['Country']
 
-            # Dynamically generate target_encoding_map from training dataset
-            target_encoding_map = {desc: idx for idx, desc in enumerate(train_df['Description'].unique())}
+            #
+
+            # Dynamically compute target-guided encoding map
+            target_encoding_map = (
+                train_df.groupby(target_guided_column)[target_column_name]
+                .mean()
+                .to_dict()
+            )
+            logging.info(f"Target encoding map for '{target_guided_column}': {target_encoding_map}")
 
             # Define pipelines
             num_pipeline = Pipeline([
@@ -44,9 +51,11 @@ class DataTransformation:
                 ("scaler", PowerTransformer(method='yeo-johnson'))
             ])
 
-            target_pipeline = Pipeline([
-                ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
-                ("target_encoder", OneHotEncoder(handle_unknown='ignore'))
+            target_guided_pipeline = Pipeline([
+                 ("imputer", SimpleImputer(strategy="constant", fill_value=0)),
+                # Apply target-guided encoding by mapping values
+                ("target_guided_encoder", 
+                 SimpleImputer(strategy="constant", fill_value=0))  # Acts as a placeholder
             ])
 
             onehot_pipeline = Pipeline([
@@ -56,14 +65,17 @@ class DataTransformation:
             ])
 
             logging.info(f"Numerical columns: {numerical_columns}")
-            logging.info(f"Target-encoded columns: {target_encoded_columns}")
+            logging.info(f"Target-guided column: {target_guided_column}")
             logging.info(f"One-hot-encoded columns: {onehot_encoded_columns}")
 
             preprocessor = ColumnTransformer([
                 ("num_pipeline", num_pipeline, numerical_columns),
-                ("target_pipeline", target_pipeline, target_encoded_columns),
+                ("target_guide_pipeline", target_guided_pipeline, [target_guided_column]),
                 ("onehot_pipeline", onehot_pipeline, onehot_encoded_columns)
             ])
+
+            # Add the target-guided encoding map as an attribute to the pipeline
+            preprocessor.target_encoding_map = target_encoding_map
 
             return preprocessor
 
@@ -79,9 +91,8 @@ class DataTransformation:
 
             logging.info("Obtaining preprocessing object")
 
-            preprocessing_obj = self.get_data_transformer_object(train_df)
-
             target_column_name = 'CLV'
+            preprocessing_obj = self.get_data_transformer_object(train_df, target_column_name)
             #numerical_columns = ['frequency', 'recency', 'Time', 'monetary_value']
 
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
@@ -95,6 +106,10 @@ class DataTransformation:
             # Validate dimensions before preprocessing
             logging.info(f"Shape of input features (train): {input_feature_train_df.shape}")
             logging.info(f"Shape of target features (train): {target_feature_train_df.shape}")
+
+            # Apply preprocessing to train and test datasets
+            input_feature_train_df['Description'] = input_feature_train_df['Description'].map(preprocessing_obj.target_encoding_map)
+            input_feature_test_df['Description'] = input_feature_test_df['Description'].map(preprocessing_obj.target_encoding_map)
 
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
@@ -110,17 +125,19 @@ class DataTransformation:
             logging.info(f"Shape of target features (train): {np.array(target_feature_train_df).shape}")
 
             # Reshape target feature to 2D
-            target_feature_train_array = np.array(target_feature_train_df).reshape(-1, 1)
-            logging.info(f"Shape of reshaped target features (train): {target_feature_train_array.shape}")
+            #target_feature_train_array = np.array(target_feature_train_df).reshape(-1, 1)
+            #logging.info(f"Shape of reshaped target features (train): {target_feature_train_array.shape}")
             
             
             # Concatenate processed features and target column for train data
-            train_arr = np.c_[np.array(input_feature_train_arr), np.array(target_feature_train_array)]
+            train_arr = np.c_[np.array(input_feature_train_arr), np.array(target_feature_train_df)]
             logging.info(f"Final training array shape: {train_arr.shape}")
 
             # Repeat for test data
-            target_feature_test_array = np.array(target_feature_test_df).reshape(-1, 1)
-            test_arr = np.c_[np.array(input_feature_test_arr), np.array(target_feature_test_array)]
+            #target_feature_test_array = np.array(target_feature_test_df).reshape(-1, 1)
+            
+            test_arr = np.c_[np.array(input_feature_test_arr), np.array(target_feature_test_df)]
+            
             logging.info(f"Final testing array shape: {test_arr.shape}")
             
             logging.info(f"Saving preprocessing object")
