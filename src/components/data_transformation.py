@@ -82,12 +82,22 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e, sys)
         
-    def initiate_data_transformation(self, train_path, test_path):
+    def initiate_data_transformation(self, train_path, test_path, sample_size=10000):
         try:
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
             logging.info("Read train and test data completed")
+
+            # If the dataset size exceeds the sample_size, sample the dataset
+            if len(train_df) > sample_size:
+                train_df = train_df.sample(n=sample_size, random_state=42)
+                logging.info(f"Sampled {sample_size} records from training dataset.")
+
+            if len(test_df) > sample_size:
+                test_df = test_df.sample(n=sample_size, random_state=42)
+                logging.info(f"Sampled {sample_size} records from testing dataset.")
+
 
             logging.info("Obtaining preprocessing object")
 
@@ -137,7 +147,6 @@ class DataTransformation:
             #target_feature_test_array = np.array(target_feature_test_df).reshape(-1, 1)
             
             test_arr = np.c_[np.array(input_feature_test_arr), np.array(target_feature_test_df)]
-            
             logging.info(f"Final testing array shape: {test_arr.shape}")
             
             logging.info(f"Saving preprocessing object")
