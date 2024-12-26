@@ -62,3 +62,9 @@ https://clvprediction-h5hhawayf6ffaccj.canadacentral-01.azurewebsites.net/predic
 - https://github.com/saurabhkamal/clvproject/blob/main/notebook/1_CLV_EDA.ipynb
 
 
+![image](https://github.com/user-attachments/assets/9e06bf49-ecdd-4ec9-af6b-1967484ceab6)
+
+
+![image](https://github.com/user-attachments/assets/747ebe90-fe68-4b18-ac60-2f4d53130ee7)
+
+
