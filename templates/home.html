@@ -1,0 +1,156 @@
+<html>
+<body>
+    <div class="login">
+       <h1>Customer Lifetime Value Prediction</h1>
+
+       <form action="{{ url_for('predict_datapoint')}}" method="post">
+        <h1>
+            <legend>Customer Lifetime Value Prediction</legend>
+        </h1>
+
+        <div class="mb-3">
+            <label class="form-label">Country</label>
+            <select class="form-control" name="Country" placeholder="Enter you Country" required>
+                <option class="placeholder" selected disabled value="">Select your Country</option>
+                <option value="United Kingdom">
+                    United Kingdom
+                </option>
+                <option value="France">
+                    France
+                </option>
+                <option value="France">
+                    France
+                </option>
+                <option value="Australia">
+                    Australia
+                </option>
+                <option value="Germany">
+                    Germany
+                </option>
+                <option value="Norway">
+                    Norway
+                </option>
+                <option value="EIRE">
+                    EIRE
+                </option>
+                <option value="Switzerland">
+                    Switzerland
+                </option>
+                <option value="Spain">
+                    Spain
+                </option>
+                <option value="Poland">
+                    Poland
+                </option>
+                <option value="Portugal">
+                    Portugal
+                </option>
+                <option value="Belgium">
+                    Belgium
+                </option>
+                <option value="EIRE">
+                    EIRE
+                </option>
+                <option value="Lithuania">
+                    Lithuania
+                </option>
+                <option value="Japan">
+                    Japan
+                </option>
+                <option value="Iceland">
+                    Iceland
+                </option>
+                <option value="Denmark">
+                    Denmark
+                </option>
+                <option value="Cyprus">
+                    Cyprus
+                </option>
+                <option value="Sweden">
+                    Sweden
+                </option>
+                <option value="Finland">
+                    Finland
+                </option>
+                <option value="Austria">
+                    Austria
+                </option>
+                <option value="Netherlands">
+                    Netherlands
+                </option>
+                <option value="Italy">
+                    Italy
+                </option>
+                <option value="Singapore">
+                    Singapore
+                </option>
+                <option value="Channel Islands">
+                    Channel Islands
+                </option>
+                <option value="Israel">
+                    Israel
+                </option>
+                <option value="Czech Republic">
+                    Czech Republic
+                </option>
+                <option value="Greece">
+                    Greece
+                </option>
+                <option value="Unspecified">
+                    Unspecified
+                </option>
+                <option value="European Community">
+                    European Community
+                </option>
+                <option value="Malta">
+                    Malta
+                </option>
+                <option value="Canada">
+                    Canada
+                </option>
+                <option value="United Arab Emirates">
+                    United Arab Emirates
+                </option>
+                <option value="USA">
+                    USA
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Frequency</label>
+            <input class="form-control" type="number" name="frequency"
+                placeholder="Enter Frequency" min='0' />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Monetary Value</label>
+            <input class="form-control" type="number" name="monetary_value"
+                placeholder="Enter Monetary Value" min='0' />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Recency</label>
+            <input class="form-control" type="number" name="recency"
+                placeholder="Enter Recency" min='0' />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Time</label>
+            <input class="form-control" type="number" name="Time"
+                placeholder="Enter Tenure" min='0' />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <select class="form-control" name="Description" required>
+                <option class="placeholder" selected disabled value="">Select a Product Description</option>
+                {% for description, encoded_value in descriptions.items() %}
+                <option value="{{ encoded_value }}">{{ description }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <input class="btn btn-primary" type="submit" value="Predict CLV" required />
+        </div>
+    </form>
+    <h2>
+       THE  prediction is {{results}}
+    </h2>
+   <body>
+</html>
