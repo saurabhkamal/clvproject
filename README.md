@@ -48,7 +48,7 @@ https://clvprediction-h5hhawayf6ffaccj.canadacentral-01.azurewebsites.net/predic
 
 - This pipeline converts given data into dataframe and has various functions to load pickle files and predict the final results in python.
 
-5. Flask App creation :
+5. Flask App creation (for testing):
 
 - Flask app is created with User Interface to predict the gemstone prices inside a Web Application.
 - http://127.0.0.1:5000/predictdata
