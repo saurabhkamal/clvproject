@@ -5,10 +5,10 @@ conda create -p venv python==3.12 -y
 conda activate venv/
 
 
-### Python app.py:
+### Python app.py (for testing):
 http://127.0.0.1:5000/predictdata
 
-### Azure Web App:
+### Azure Web App (for testing):
 https://clvprediction-h5hhawayf6ffaccj.canadacentral-01.azurewebsites.net/predictdata 
 
 
