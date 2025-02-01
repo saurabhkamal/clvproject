@@ -53,7 +53,7 @@ https://clvprediction-h5hhawayf6ffaccj.canadacentral-01.azurewebsites.net/predic
 - Flask app is created with User Interface to predict the gemstone prices inside a Web Application.
 - http://127.0.0.1:5000/predictdata
 
-6. Microsoft Azure Deployment:
+6. Microsoft Azure Deployment (for testing):
 
 - https://clvprediction-h5hhawayf6ffaccj.canadacentral-01.azurewebsites.net/predictdata 
 
